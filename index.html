@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js"></script>
 
 <style>
 :root {
@@ -677,25 +678,24 @@ function calculateResults(e) {
 
   document.getElementById('resultsView').classList.add('active');
 
-  // Instant Email Dispatch via Formspree
-  fetch("https://formspree.io/f/hello@struct.solutions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
+  // Instant Email Dispatch via EmailJS
+  emailjs.send(
+    "service_8wjxfiw",
+    "template_5dbqcal",
+    {
+      from_name: name,
+      from_email: email,
+      business_name: biz || 'Not provided',
+      subject: `New Trades Audit Lead: ${name} (${biz || 'Trade'})`,
+      message: `Trades Admin Audit results for ${name}${biz ? ` (${biz})` : ''}:\n\n` +
+        `Monthly lost hours: ${monthlyHours} hrs\n` +
+        `Estimated revenue leak: £${estimatedCost.toLocaleString()}\n` +
+        `Automation potential: ${autoPotential}%\n\n` +
+        `Answers breakdown: ${JSON.stringify(answers)}\n\n` +
+        `Source: Facebook Group Lead Gen Audit`
     },
-    body: JSON.stringify({
-      subject: `🚨 New Trades Audit Lead: ${name} (${biz || 'Trade'})`,
-      name: name,
-      email: email,
-      business: biz || 'Not specified',
-      monthly_lost_hours: `${monthlyHours} hrs/month`,
-      estimated_revenue_leak: `£${estimatedCost.toLocaleString()}`,
-      automation_potential: `${autoPotential}%`,
-      answers_summary: JSON.stringify(answers),
-      source: "Facebook Group Lead Gen Audit"
-    })
-  }).catch(err => console.log('Lead sync noted:', err));
+    { publicKey: "547Y5-X7Qy3MgqjUh" }
+  ).catch(err => console.log('Lead sync noted:', err));
 
   console.log('New Lead Captured:', { name, email, biz, monthlyHours, estimatedCost, autoPotential });
 }
