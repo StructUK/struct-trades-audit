@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Trades Admin & Automation Audit — Struct Solutions</title>
+<meta name="description" content="Take the 60-second Trades Admin Audit. Discover how many hours and how much revenue your business is leaking each month to manual admin." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+
+<style>
+:root {
+  --green-50: #e8f5e6;
+  --green-100: #c2e6bc;
+  --green-400: #4caf50;
+  --green-500: #2e9e34;
+  --green-600: #1a7d20;
+  --green-glow: rgba(46, 158, 52, 0.35);
+  --black: #0a0d0b;
+  --bg-card: #121713;
+  --bg-card-hover: #171f19;
+  --white: #f5f7f4;
+  --text-muted: #839482;
+  --border: rgba(46, 158, 52, 0.2);
+  --border-strong: rgba(76, 175, 80, 0.45);
+  --danger: #ef4444;
+  --warning: #f59e0b;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background-color: var(--black);
+  color: var(--white);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.6;
+  background-image: 
+    radial-gradient(circle at 50% 10%, rgba(46, 158, 52, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 90% 90%, rgba(46, 158, 52, 0.05) 0%, transparent 40%);
+}
+
+/* Nav */
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 2rem;
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(10, 13, 11, 0.85);
+}
+.brand-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: var(--white);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.brand-title span { color: var(--green-400); }
+.nav-badge {
+  font-size: 0.8rem;
+  color: var(--green-400);
+  background: rgba(46, 158, 52, 0.12);
+  border: 1px solid var(--border);
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-weight: 500;
+}
+
+/* Main Container */
+.container {
+  max-width: 760px;
+  width: 100%;
+  margin: 2.5rem auto;
+  padding: 0 1.25rem;
+  flex: 1;
+}
+
+/* Hero / Header */
+.audit-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.eyebrow {
+  display: inline-block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  color: var(--green-400);
+  margin-bottom: 0.75rem;
+}
+h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.85rem, 4vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+h1 em {
+  font-style: normal;
+  color: var(--green-400);
+}
+.subtitle {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+/* Card Wrapper */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2.25rem 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Progress bar */
+.progress-container {
+  margin-bottom: 1.75rem;
+}
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+.progress-track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--green-600), var(--green-400));
+  transition: width 0.3s ease;
+  border-radius: 999px;
+}
+
+/* Question Steps */
+.question-step { display: none; }
+.question-step.active { display: block; animation: fadeIn 0.3s ease-out; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.question-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.question-desc {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Options */
+.options-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.option-btn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  color: var(--white);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.98rem;
+  font-family: inherit;
+}
+.option-btn:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-strong);
+  transform: translateX(4px);
+}
+.option-btn.selected {
+  background: rgba(46, 158, 52, 0.15);
+  border-color: var(--green-400);
+}
+.option-radio {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--text-muted);
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+.option-btn.selected .option-radio {
+  border-color: var(--green-400);
+  background: var(--green-400);
+}
+
+/* Lead Capture Form */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+  color: var(--white);
+}
+.form-input {
+  width: 100%;
+  padding: 0.9rem 1.1rem;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--white);
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+.form-input:focus {
+  outline: none;
+  border-color: var(--green-400);
+  box-shadow: 0 0 0 3px var(--green-glow);
+}
+
+.submit-btn, .cta-btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: var(--green-500);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 20px var(--green-glow);
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.submit-btn:hover, .cta-btn:hover {
+  background: var(--green-400);
+  transform: translateY(-2px);
+}
+
+/* Results Dashboard */
+.results-card {
+  display: none;
+}
+.results-card.active {
+  display: block;
+  animation: fadeIn 0.4s ease-out;
+}
+.score-badge {
+  display: inline-block;
+  padding: 0.35rem 1rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+.score-badge.high-leak { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+.score-badge.med-leak { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+.score-badge.low-leak { background: rgba(46, 158, 52, 0.15); color: #4ade80; border: 1px solid rgba(46,158,52,0.3); }
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
+}
+.metric-box {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border);
+  padding: 1.25rem;
+  border-radius: 12px;
+  text-align: center;
+}
+.metric-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.35rem;
+}
+.metric-val {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--green-400);
+}
+
+.recommendations {
+  border-top: 1px solid var(--border);
+  padding-top: 1.75rem;
+  margin-top: 1.5rem;
+}
+.rec-item {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  align-items: flex-start;
+}
+.rec-number {
+  background: rgba(46, 158, 52, 0.2);
+  color: var(--green-400);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.rec-content h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+.rec-content p {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.footer-trust {
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 1rem;
+}
+
+footer {
+  text-align: center;
+  padding: 2rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="https://www.struct.solutions" class="brand-title">
+    <img src="imgs/structlogo1w.png" alt="Struct Solutions" style="height: 26px; width: auto; display: block;" onerror="this.onerror=null; this.src='https://www.struct.solutions/imgs/structlogo1w.png';" />
+  </a>
+  <div class="nav-badge">Trades Automation Audit</div>
+</nav>
+
+<div class="container">
+  <div class="audit-header" id="heroHeader">
+    <span class="eyebrow">60-Second Efficiency Check</span>
+    <h1>How Much Is Admin Costing Your <em>Trades Business?</em></h1>
+    <p class="subtitle">Answer 5 quick questions to calculate your monthly admin leakage in hours, stress, and missed revenue.</p>
+  </div>
+
+  <div class="card">
+    <div class="progress-container" id="progressWrap">
+      <div class="progress-meta">
+        <span id="stepCounter">Question 1 of 5</span>
+        <span id="progressPercent">20%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-bar" id="progressBar" style="width: 20%;"></div>
+      </div>
+    </div>
+
+    <!-- Question 1 -->
+    <div class="question-step active" data-step="1">
+      <div class="question-title">1. How do new job enquiries usually come in?</div>
+      <div class="question-desc">Pick the option that represents how most of your customers get in touch.</div>
+      <div class="options-grid">
+        <button class="option-btn" onclick="selectOption(1, 4, 3)">
+          <span>Scattered across WhatsApp, voicemail, SMS, & Instagram DMs</span>
+          <div class="option-radio"></div>
+        </button>
+        <button class="option-btn" onclick="selectOption(1, 2.5, 2)">
+          <span>Mostly phone calls and standard website contact form / emails</span>
+          <div class="option-radio"></div>
+        </button>
+        <button class="option-btn" onclick="selectOption(1, 1, 0)">
+          <span>Dedicated booking software or structured form fed into a single inbox</span>
+          <div class="option-radio"></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="question-step" data-step="2">
+      <div class="question-title">2. How fast do you send quotes after visiting or getting job details?</div>
+      <div class="question-desc">Speed to quote is the #1 factor in winning high-margin trades jobs.</div>
+      <div class="options-grid">
+        <button class="option-btn" onclick="selectOption(2, 5, 4)">
+          <span>Days later (usually late at night or over the weekend when I finally get time)</span>
+          <div class="option-radio"></div>
+        </button>
+        <button class="option-btn" onclick="selectOption(2, 2.5, 2)">
+          <span>Within 24 to 48 hours manually typing up notes</span>
+          <div class="option-radio"></div>
+        </button>
+        <button class="option-btn" onclick="selectOption(2, 0.5, 0)">
+          <span>Same day / automated templates & instant itemised estimates</span>
+          <div class="option-radio"></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="question-step" data-step="3">
+      <div class="question-title">3. What happens once a quote is sent to a customer?</div>
+      <div class="question-desc">Trades lose an average of 30% of quotes simply due to zero follow-up.</div>
+      <div class="options-grid">
+        <button class="option-btn" onclick="selectOption(3, 4, 4)">
+          <span>Nothing. If they don't reply, I rarely have time to chase them</span>
+          <div class="option-radio"></div>
+        </button>
+        <button class="option-btn" onclick="selectOption(3, 2, 2)">
+          <span>I try to remember to text or ring them a few days later if I'm free</span>
+          <div class="option-radio"></div>
+        </button>
+        <button class="option-btn" onclick="selectOption(3, 0.2, 0)">
+          <span>Automated 3-step follow-up via email/SMS until they accept or decline</span>
+          <div class="option-radio"></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Question 4 -->
+    <div class="question-step" data-step="4">
+      <div class="question-title">4. How do you handle invoices and chasing late payments?</div>
+      <div class="question-desc">Getting paid on time shouldn't require playing detective every Friday.</div>
+      <div class="options-grid">
+        <button class="option-btn" onclick="selectOption(4, 4, 3)">
+          <span>Send them manually at month-end; constantly checking bank accounts and chasing</span>
+          <div class="option-radio"></div>
+        </button>
+        <button class="option-btn" onclick="selectOption(4, 2, 1.5)">
+          <span>Use Quickbooks/Xero, but manually send reminders when invoices go overdue</span>
+          <div class="option-radio"></div>
+        </button>
+        <button class="option-btn" onclick="selectOption(4, 0.5, 0)">
+          <span>Auto-invoiced on job completion with automated payment reminders and card link</span>
+          <div class="option-radio"></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Question 5 -->
+    <div class="question-step" data-step="5">
+      <div class="question-title">5. How many team members or subcontractors do you coordinate?</div>
+      <div class="question-desc">Helps us calculate total operational friction.</div>
+      <div class="options-grid">
+        <button class="option-btn" onclick="selectOption(5, 1, 1)">
+          <span>Just me (Sole trader / 1-man band)</span>
+          <div class="option-radio"></div>
+        </button>
+        <button class="option-btn" onclick="selectOption(5, 2.5, 2)">
+          <span>2 to 5 people (Small crew / apprentices / subbies)</span>
+          <div class="option-radio"></div>
+        </button>
+        <button class="option-btn" onclick="selectOption(5, 4, 3)">
+          <span>6+ engineers & vans on the road</span>
+          <div class="option-radio"></div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Lead Gate Step -->
+    <div class="question-step" id="leadStep">
+      <div class="question-title">Your Audit is Ready! 📊</div>
+      <div class="question-desc">Where should we send your full Admin Breakdown & Tailored 3-Step Automation Roadmap?</div>
+      
+      <form id="auditForm" onsubmit="calculateResults(event)">
+        <div class="form-group">
+          <label class="form-label">Your Name</label>
+          <input type="text" id="leadName" class="form-input" placeholder="e.g. Dave Miller" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" id="leadEmail" class="form-input" placeholder="e.g. dave@millerplumbing.co.uk" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Trade / Business Name (Optional)</label>
+          <input type="text" id="leadBiz" class="form-input" placeholder="e.g. Miller Heating & Electrical" />
+        </div>
+        <button type="submit" class="submit-btn">Unlock My Full Audit Results →</button>
+      </form>
+      <p class="footer-trust">🔒 100% privacy guaranteed. No spam, ever.</p>
+    </div>
+
+    <!-- Results Display -->
+    <div class="results-card" id="resultsView">
+      <div style="text-align: center;">
+        <span class="score-badge high-leak" id="resultBadge">HIGH ADMIN LEAKAGE</span>
+        <h2 style="font-family: 'Syne', sans-serif; font-size: 1.8rem; margin-bottom: 0.5rem;" id="resultGreeting">Here is your leak breakdown:</h2>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">Based on your answers, here is the estimated time and money manual tasks are costing your business every month:</p>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-box">
+          <div class="metric-label">Lost Hours / Month</div>
+          <div class="metric-val" id="metricHours">22 hrs</div>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">Evenings & weekends spent on admin</span>
+        </div>
+        <div class="metric-box">
+          <div class="metric-label">Estimated Revenue Leak</div>
+          <div class="metric-val" id="metricCost">£1,450</div>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">Slow quotes + unchased leads</span>
+        </div>
+        <div class="metric-box">
+          <div class="metric-label">Automation Potential</div>
+          <div class="metric-val" id="metricScore" style="color: #4ade80;">78%</div>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">Of current tasks can run automatically</span>
+        </div>
+      </div>
+
+      <div class="recommendations">
+        <h3 style="font-family: 'Syne', sans-serif; font-size: 1.15rem; margin-bottom: 1rem;">Your 3 Quickest Automation Wins:</h3>
+        
+        <div class="rec-item">
+          <div class="rec-number">1</div>
+          <div class="rec-content">
+            <h4>Automated Enquiry Triage & Instant SMS Reply</h4>
+            <p>Route all incoming texts, emails, and web forms into one place with an immediate auto-acknowledgement so customers don't ring the next competitor on Google.</p>
+          </div>
+        </div>
+
+        <div class="rec-item">
+          <div class="rec-number">2</div>
+          <div class="rec-content">
+            <h4>Quote Follow-Up Drip (Recovers 20-30% More Jobs)</h4>
+            <p>Set a 3-touch automatic SMS/Email check-in ("Hi Dave, just checking you received the boiler quote?") at Day 2, Day 5, and Day 10 without you lifting a finger.</p>
+          </div>
+        </div>
+
+        <div class="rec-item">
+          <div class="rec-number">3</div>
+          <div class="rec-content">
+            <h4>One-Click Completion & Payment Chasing</h4>
+            <p>Trigger invoice delivery immediately when you mark the job done, backed by polite automated reminders before the invoice becomes overdue.</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 2rem; text-align: center; background: rgba(46,158,52,0.08); border: 1px solid var(--border-strong); padding: 1.5rem; border-radius: 12px;">
+        <h3 style="font-family: 'Syne', sans-serif; font-size: 1.25rem; margin-bottom: 0.5rem;">Want us to build this for your business?</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.25rem;">We build custom, low-cost automations that run 24/7 so you never do repetitive admin again. Most setups are live in under 7 days.</p>
+        <a href="https://www.struct.solutions/contact" target="_blank" class="cta-btn">Book a Free 20-Min Automation Strategy Call →</a>
+        <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.6rem;">No pitch · UK-based · Fixed pricing starting from £250</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 Struct Solutions (www.struct.solutions). All rights reserved.</p>
+</footer>
+
+<script>
+let currentStep = 1;
+const totalSteps = 5;
+
+const answers = {
+  1: { hours: 0, risk: 0 },
+  2: { hours: 0, risk: 0 },
+  3: { hours: 0, risk: 0 },
+  4: { hours: 0, risk: 0 },
+  5: { hours: 0, risk: 0 }
+};
+
+function selectOption(step, hours, risk) {
+  answers[step] = { hours, risk };
+  
+  const currentStepEl = document.querySelector(`.question-step[data-step="${step}"]`);
+  const buttons = currentStepEl.querySelectorAll('.option-btn');
+  buttons.forEach(b => b.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+
+  setTimeout(() => {
+    if (step < totalSteps) {
+      goToStep(step + 1);
+    } else {
+      showLeadStep();
+    }
+  }, 250);
+}
+
+function goToStep(step) {
+  document.querySelectorAll('.question-step').forEach(el => el.classList.remove('active'));
+  const nextEl = document.querySelector(`.question-step[data-step="${step}"]`);
+  if (nextEl) nextEl.classList.add('active');
+  
+  currentStep = step;
+  const pct = Math.round((step / totalSteps) * 100);
+  document.getElementById('stepCounter').textContent = `Question ${step} of ${totalSteps}`;
+  document.getElementById('progressPercent').textContent = `${pct}%`;
+  document.getElementById('progressBar').style.width = `${pct}%`;
+}
+
+function showLeadStep() {
+  document.querySelectorAll('.question-step').forEach(el => el.classList.remove('active'));
+  document.getElementById('leadStep').classList.add('active');
+  document.getElementById('stepCounter').textContent = 'Almost Done!';
+  document.getElementById('progressPercent').textContent = '95%';
+  document.getElementById('progressBar').style.width = '95%';
+}
+
+function calculateResults(e) {
+  e.preventDefault();
+  const name = document.getElementById('leadName').value;
+  const email = document.getElementById('leadEmail').value;
+  const biz = document.getElementById('leadBiz').value;
+
+  let totalH = 0;
+  let totalR = 0;
+  for (let k in answers) {
+    totalH += answers[k].hours;
+    totalR += answers[k].risk;
+  }
+
+  const monthlyHours = Math.round(totalH * 4);
+  const estimatedCost = Math.round((monthlyHours * 45) + (totalR * 220));
+  const autoPotential = Math.min(88, Math.max(55, Math.round((totalH / 18) * 100)));
+
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('leadStep').classList.remove('active');
+  document.getElementById('heroHeader').style.display = 'none';
+
+  document.getElementById('metricHours').textContent = `${monthlyHours} hrs`;
+  document.getElementById('metricCost').textContent = `£${estimatedCost.toLocaleString()}`;
+  document.getElementById('metricScore').textContent = `${autoPotential}%`;
+  
+  if (name) {
+    document.getElementById('resultGreeting').textContent = `${name}, here is your admin leakage audit:`;
+  }
+
+  const badge = document.getElementById('resultBadge');
+  if (monthlyHours > 18) {
+    badge.className = 'score-badge high-leak';
+    badge.textContent = 'CRITICAL ADMIN LEAKAGE DETECTED';
+  } else if (monthlyHours > 8) {
+    badge.className = 'score-badge med-leak';
+    badge.textContent = 'MODERATE TIME & REVENUE LEAK';
+  } else {
+    badge.className = 'score-badge low-leak';
+    badge.textContent = 'HEALTHY SYSTEM — HIGH POTENTIAL TO SCALE';
+  }
+
+  document.getElementById('resultsView').classList.add('active');
+
+  // Instant Email Dispatch via Formspree
+  fetch("https://formspree.io/f/hello@struct.solutions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify({
+      subject: `🚨 New Trades Audit Lead: ${name} (${biz || 'Trade'})`,
+      name: name,
+      email: email,
+      business: biz || 'Not specified',
+      monthly_lost_hours: `${monthlyHours} hrs/month`,
+      estimated_revenue_leak: `£${estimatedCost.toLocaleString()}`,
+      automation_potential: `${autoPotential}%`,
+      answers_summary: JSON.stringify(answers),
+      source: "Facebook Group Lead Gen Audit"
+    })
+  }).catch(err => console.log('Lead sync noted:', err));
+
+  console.log('New Lead Captured:', { name, email, biz, monthlyHours, estimatedCost, autoPotential });
+}
+</script>
+</body>
+</html>
